@@ -81,13 +81,13 @@ api = tw.API(auth)
 
 # Define the search term and the date_since date as variables
 search_words = "coronavirus"
-date_since = "2020-02-01"
+date_since = "2020-03-027"
 new_search = search_words + " -filter:retweets"
 
 users = {}
 users_tweets = {}
 
-max_tweets = 2
+max_tweets = 250
 
 db_util = Neo4J_DB.Neo4j_DB_Util()
 
@@ -126,7 +126,7 @@ for key in Constants.Cities_Geocode:
           tweet_data["favorite_count"] = tweet.favorite_count
           tweet_json = json.loads(json.dumps(tweet._json))
           users_mentioned = tweet_json['entities']['user_mentions']
-          tweet_data["user_mentions"] = [user['id'] for user in users_mentioned]
+          #tweet_data["user_mentions"] = [user['id'] for user in users_mentioned]
           tweet_hashtags = tweet_json['entities']['hashtags']
           tweet_data["hashtags"] = [hashtag['text'] for hashtag in tweet_hashtags]
           tweet_data["sentiment"] = get_tweet_sentiment(tweet.full_text)
@@ -156,12 +156,9 @@ for key in Constants.Cities_Geocode:
           db_util.Connect_User_City(tweet.user.id, key)    # Connect user with the city
           db_util.Insert_Hashtag(tweet_data["hashtags"], tweet.user.id, tweet.id)    #Insert list of hasgtags into DB & Connect them to user and tweet
 
-          for user_id in tweet_data["user_mentions"]:
-              mentioned_user = create_user_using_user_id(api, user_id)
-              city = find_user_city(mentioned_user['location'])     # find which city does the mentioned user belong to
-              db_util.Insert_Mentioned_User(mentioned_user)     # Insert User into DB
-              #db_util.Connect_User_City(mentioned_user['id'], city)      # Connect user with the city
-              db_util.Connect_Mentioned_User_Tweet(mentioned_user['id'], tweet.id)      # Connect user with the city
+          for user in users_mentioned:
+              db_util.Insert_Mentioned_User(user['id'], user['screen_name'])     # Create a mentioned user entity
+              db_util.Connect_Mentioned_User_Tweet(user['id'], tweet.id)      # Connect user with the city
 
           ## Mentioned Users:
 

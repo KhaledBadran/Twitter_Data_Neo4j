@@ -28,9 +28,9 @@ class Neo4j_DB_Util(object):
             log = session.write_transaction(self._create_user, user)
             print(log)
 
-    def Insert_Mentioned_User(self, mentioned_user):
+    def Insert_Mentioned_User(self, user_id, screen_name):
         with self._driver.session() as session:
-            log = session.write_transaction(self._create_mentioned_user, mentioned_user)
+            log = session.write_transaction(self._create_mentioned_user, user_id, screen_name)
             print(log)
 
     def Insert_Tweet(self, tweet):
@@ -84,15 +84,11 @@ class Neo4j_DB_Util(object):
         return result.single()[0]
 
     @staticmethod
-    def _create_mentioned_user(tx, user):
+    def _create_mentioned_user(tx, user_id, screen_name):
         result = tx.run("Merge (a:Mentioned_User "
-                        "{ user_id: $id, screen_name: $screen_name, followers: $followers,"
-                        " favourites_count: $favourites_count, following_count: $following_count,"
-                        " verified: $verified, location: $location }) "
+                        "{ user_id: $id, screen_name: $screen_name}) "
                         "RETURN a.id+ ', from node ' + id(a)",
-                        id=user["id"], screen_name=user["screen_name"], followers=user["followers"],
-                        favourites_count=user["favourites_count"], following_count=user["following_count"],
-                        verified=user["verified"], location=user["location"])
+                        id=user_id, screen_name=screen_name)
         return result.single()[0]
 
     @staticmethod
