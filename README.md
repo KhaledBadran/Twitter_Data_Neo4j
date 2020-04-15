@@ -21,6 +21,9 @@ $ pip install neo4j
 Please note in order to access Twitter API you need to have a Twitter developer account where you can sign up in order to obtain 'consumer key' and 'access token'.<br />
 Also you need to have either local or remote Neo4j graph database in order to save the resulting data.
 
+### Running the script
+In order to run the script all you have to do is to provide your neo4j db configuration, your twitter API keys, specify how big the dataset you wanted to by changing the 'max_tweets' variable, and execute Twitter_API.py
+
 ## Authors
 Khaled Badran 40069733<br />
 Emile Tabbakh 40026110<br />
